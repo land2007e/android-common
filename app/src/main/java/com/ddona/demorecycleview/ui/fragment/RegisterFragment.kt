@@ -7,8 +7,19 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ddona.demorecycleview.databinding.ActivityRegisterBinding
 
-class RegisterFragment : Fragment(){
-    private lateinit var binding:ActivityRegisterBinding
+class RegisterFragment : Fragment() {
+    private lateinit var binding: ActivityRegisterBinding
+    private var username: String? = null
+    private var password: String? = null
+
+    fun setUserName(username: String) {
+        this.username = username
+    }
+
+    fun setPassword(password: String) {
+        this.password = password
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -18,7 +29,8 @@ class RegisterFragment : Fragment(){
             inflater, container, false
         )
         binding.edtUsername.setText(
-            arguments?.getString("username")
+//            arguments?.getString("username")
+            username
         )
         return binding.root
     }
