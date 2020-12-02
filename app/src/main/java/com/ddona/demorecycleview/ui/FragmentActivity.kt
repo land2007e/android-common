@@ -9,9 +9,17 @@ class FragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
-        addHomFragment()
+        addStorageFragment()
     }
 
+    private fun addStorageFragment() {
+        val manager = supportFragmentManager
+        val tran = manager.beginTransaction()
+        val fr = StorageFragment()
+        tran.add(R.id.content, fr)
+
+        tran.commit()
+    }
     private fun addHomFragment() {
         val manager = supportFragmentManager
         val tran = manager.beginTransaction()
