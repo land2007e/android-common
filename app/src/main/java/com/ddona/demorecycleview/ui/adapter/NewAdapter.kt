@@ -33,11 +33,17 @@ class NewAdapter : RecyclerView.Adapter<NewAdapter.NewHolder> {
         position: Int
     ) {
         holder.binding.data = inter.getData(position)
+        holder.binding.root.setOnClickListener {
+            inter.onClickItem(
+                holder.adapterPosition
+            )
+        }
     }
 
     interface INewAdapter {
         fun getCount(): Int
         fun getData(position: Int): ItemNew
+        fun onClickItem(position: Int)
     }
 
     class NewHolder(val binding: ItemNewBinding) : RecyclerView.ViewHolder(binding.root)

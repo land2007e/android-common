@@ -9,6 +9,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ddona.demorecycleview.databinding.FragmentNewBinding
 import com.ddona.demorecycleview.model.ItemNew
+import com.ddona.demorecycleview.ui.FragmentActivity
 import com.ddona.demorecycleview.ui.adapter.NewAdapter
 import org.jsoup.Jsoup
 
@@ -27,7 +28,8 @@ class NewFragment : Fragment(), NewAdapter.INewAdapter {
         )
         binding.rc.layoutManager = LinearLayoutManager(context)
         binding.rc.adapter = NewAdapter(this)
-        getData("https://genk.vn/mobile.chn")
+//        "https://genk.vn/mobile.chn"
+        getData(arguments!!.getString("LINK")!!)
         return binding.root
     }
 
@@ -41,8 +43,10 @@ class NewFragment : Fragment(), NewAdapter.INewAdapter {
                     val title = d.select("a").first().attr("title")
                     val linkImage = d.select("a").first().select("img").attr("src")
                     val content = d.select("span").get(3).text()
+                    val link = d.select("a").first().attr("href")
                     items.add(
-                        ItemNew(linkImage, title, content, "")
+                        ItemNew(linkImage, title, content,
+                            "https://genk.vn"+link)
                     )
                 }
 
@@ -61,4 +65,11 @@ class NewFragment : Fragment(), NewAdapter.INewAdapter {
     override fun getCount() = itemNews.size
 
     override fun getData(position: Int) = itemNews[position]
+
+    override fun onClickItem(position: Int) {
+        //mo fragment detail
+        (activity as FragmentActivity).openDetailFragment(
+            itemNews[position].link
+        )
+    }
 }
