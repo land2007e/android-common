@@ -11,6 +11,11 @@ object Utils {
     fun setText(tv: TextView, content: String?) {
         tv.setText(content)
     }
+    @JvmStatic
+    @BindingAdapter("setText")
+    fun setText(tv: TextView, content: Int) {
+        tv.setText(content.toString())
+    }
 
     @JvmStatic
     @BindingAdapter("setImage")

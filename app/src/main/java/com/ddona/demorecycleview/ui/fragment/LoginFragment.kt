@@ -7,10 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.ddona.demorecycleview.databinding.ActivityLoginBinding
+import com.ddona.demorecycleview.model.ShareUtils
 import com.ddona.demorecycleview.ui.FragmentActivity
 
 class LoginFragment : Fragment(), View.OnClickListener {
-    companion object{
+    companion object {
         val TAG = LoginFragment::class.java.name
     }
 
@@ -25,17 +26,33 @@ class LoginFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding= ActivityLoginBinding.inflate(inflater, container, false)
+        binding = ActivityLoginBinding.inflate(inflater, container, false)
         Log.d(TAG, "onCreateView....")
         binding.btnLogin.setOnClickListener(this)
+
+        binding.edtUsername.setText(
+            ShareUtils.getUsername(activity!!)
+        )
+        binding.edtPassword.setText(
+            ShareUtils.getPassword(activity!!)
+        )
         return binding.root
     }
+
     override fun onClick(v: View) {
+        //save
+        ShareUtils.saveAccount(
+            activity!!,
+            binding.edtUsername.text.toString(),
+            binding.edtPassword.text.toString()
+        )
+
         (activity as FragmentActivity).addRegisterFragment(
             binding.edtUsername.text.toString(),
             binding.edtPassword.text.toString()
         )
     }
+
     override fun onResume() {
         super.onResume()
         Log.d(TAG, "onResume....")
