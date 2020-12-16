@@ -1,5 +1,6 @@
 package com.ddona.demorecycleview.db
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.os.Environment
@@ -23,10 +24,59 @@ class DataBaseManager {
         copyDatabase()
     }
 
+    fun createHighScore() {
+        val sql = "CREATE TABLE IF NOT EXISTS high_score ( " +
+                "id INTEGER NOT NULL UNIQUE, " +
+                "name TEXT  NOT NULL, " +
+                "pass_level INTEGER  NOT NULL, " +
+                "money TEXT  NOT NULL, " +
+                "PRIMARY KEY(id AUTOINCREMENT) " +
+                ")"
+        openDatabase()
+        database?.execSQL(sql)
+        closeDatabase()
+    }
+
+    fun insertHighScore(name: String, passLevel: Int, money: String) {
+        openDatabase()
+        //ContentValues de chua cac cap gia tri keu(column name) + value (value of column)
+        val contentValues = ContentValues()
+        contentValues.put("name", name)
+        contentValues.put("pass_level", passLevel)
+        contentValues.put("money", money)
+        database?.insert("high_score", null, contentValues)
+        closeDatabase()
+    }
+
+    fun updateHighScore(id: Int, money: String, name: String) {
+        openDatabase()
+        //ContentValues de update
+        val contentValue = ContentValues()
+        contentValue.put("name", name)
+        contentValue.put("money", money)
+        database?.update(
+            "high_score", contentValue,
+            "id = ?", arrayOf(id.toString())
+        )
+        //when you update database, you must call the method 'setTransactionSuccessfull'
+        database?.setTransactionSuccessful()
+        closeDatabase()
+    }
+
+    fun deleteHighScore(id: Int) {
+        openDatabase()
+        database?.delete(
+            "high_score", "id = ?",
+            arrayOf(id.toString())
+        )
+        database?.setTransactionSuccessful()
+        closeDatabase()
+    }
+
     fun copyDatabase() {
         val input = context.assets.open(DB_NAME)
         val path = Environment.getDataDirectory().path +
-                File.separator + "data"+
+                File.separator + "data" +
                 File.separator + context.packageName +
                 File.separator + "db"
         File(path).mkdir()
@@ -48,7 +98,7 @@ class DataBaseManager {
     private fun openDatabase() {
         if (database == null || !database!!.isOpen()) {
             val path = Environment.getDataDirectory().path +
-                    File.separator + "data"+
+                    File.separator + "data" +
                     File.separator + context.packageName +
                     File.separator + "db"
             val fullPath = path + File.separator + DB_NAME
