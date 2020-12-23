@@ -33,7 +33,7 @@ class MusicOnlineFragment : Fragment() {
             override fun doInBackground(vararg params: Void?): MutableList<MusicOnline> {
                 val list = mutableListOf<MusicOnline>()
                 for (i in 1..20){
-                    list.addAll(getListItemMusic("https://chiasenhac.vn/mp3/vietnam.html?tab=album-2020&page=2"))
+                    list.addAll(getListItemMusic("https://chiasenhac.vn/mp3/vietnam.html?tab=album-2020&page="+i.toString()))
                 }
                 return list
             }
