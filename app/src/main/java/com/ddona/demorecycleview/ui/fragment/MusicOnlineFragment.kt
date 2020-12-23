@@ -6,13 +6,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.ddona.demorecycleview.databinding.FragmentMusicOnlineBinding
 import com.ddona.demorecycleview.model.MusicOnline
+import com.ddona.demorecycleview.ui.adapter.MusicOnlineAdapter
 import org.jsoup.Jsoup
 import java.lang.Exception
 
-class MusicOnlineFragment : Fragment() {
+class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline {
     private lateinit var binding: FragmentMusicOnlineBinding
+    private val musicOnlines = mutableListOf<MusicOnline>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -23,7 +26,8 @@ class MusicOnlineFragment : Fragment() {
             container,
             false
         )
-
+        binding.rc.layoutManager = GridLayoutManager(context, 2)
+        binding.rc.adapter = MusicOnlineAdapter(this)
         initThreadMusicOnline()
         return binding.root
     }
@@ -36,6 +40,12 @@ class MusicOnlineFragment : Fragment() {
                     list.addAll(getListItemMusic("https://chiasenhac.vn/mp3/vietnam.html?tab=album-2020&page="+i.toString()))
                 }
                 return list
+            }
+
+            override fun onPostExecute(result: MutableList<MusicOnline>) {
+                musicOnlines.clear()
+                musicOnlines.addAll(result)
+                binding.rc.adapter?.notifyDataSetChanged()
             }
         }
         asyn.execute()
@@ -71,5 +81,17 @@ class MusicOnlineFragment : Fragment() {
             }
         }
         return musics
+    }
+
+    override fun onItemClick(position: Int) {
+
+    }
+
+    override fun getCount(): Int {
+       return musicOnlines.size
+    }
+
+    override fun getData(position: Int): MusicOnline {
+        return musicOnlines[position]
     }
 }
