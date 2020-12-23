@@ -9,9 +9,17 @@ class FragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
-        addMusicOfflineFragment()
+        addMusicOnlineFragment()
     }
 
+    private fun addMusicOnlineFragment() {
+        val manager = supportFragmentManager
+        val tran = manager.beginTransaction()
+        val fr = MusicOnlineFragment()
+        tran.add(R.id.content, fr)
+
+        tran.commit()
+    }
     private fun addMusicOfflineFragment() {
         val manager = supportFragmentManager
         val tran = manager.beginTransaction()
