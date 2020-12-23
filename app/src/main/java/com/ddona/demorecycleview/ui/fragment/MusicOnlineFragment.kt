@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.ddona.demorecycleview.databinding.FragmentMusicOnlineBinding
+import com.ddona.demorecycleview.model.MediaManagerOnline
 import com.ddona.demorecycleview.model.MusicOnline
 import com.ddona.demorecycleview.ui.adapter.MusicOnlineAdapter
 import org.jsoup.Jsoup
@@ -16,6 +17,7 @@ import java.lang.Exception
 class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline {
     private lateinit var binding: FragmentMusicOnlineBinding
     private val musicOnlines = mutableListOf<MusicOnline>()
+    private val media = MediaManagerOnline()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -67,7 +69,7 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline {
                         linkImage.indexOf(")")
                     )
                     val name = item.selectFirst("a").attr("title")
-                    val linkHtml = "https://chiasenhac.vn/" + item.selectFirst("a").attr("href")
+                    val linkHtml = "https://vi.chiasenhac.vn" + item.selectFirst("a").attr("href")
                     val artist = el.selectFirst("div.card-body").selectFirst("p").text()
 
                     musics.add(
@@ -84,6 +86,11 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline {
     }
 
     override fun onItemClick(position: Int) {
+        if (musicOnlines[position].linkMusic == null){
+                getLinkMusicAsyn(musicOnlines[position].linkHtml, position)
+        }else {
+            media.setPath(musicOnlines[position].linkMusic!!)
+        }
 
     }
 
@@ -93,5 +100,37 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline {
 
     override fun getData(position: Int): MusicOnline {
         return musicOnlines[position]
+    }
+
+    private fun getLinkMusicAsyn(linkHtml:String, position: Int){
+        val asyn = object :AsyncTask<Void, Void, String?>(){
+            override fun doInBackground(vararg params: Void?): String? {
+               return getLinkMusic(linkHtml =linkHtml )
+            }
+
+            override fun onPostExecute(result: String?) {
+                musicOnlines[position].linkMusic=result
+                if (result != null){
+                    media.setPath(result!!)
+                }
+
+            }
+        }
+
+        asyn.execute()
+    }
+
+    private fun getLinkMusic(linkHtml:String):String?{
+        val doc = Jsoup.connect(linkHtml).get()
+        val els = doc.select("div.tab-content")
+        for (e in els.first().select("ul.list-unstyled")
+            .first().select("a.download_item")){
+            val link = e.attr("href")
+            if ( link.contains(".mp3")){
+                return link
+            }
+        }
+
+        return null
     }
 }
