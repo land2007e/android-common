@@ -35,6 +35,8 @@
         <activity android:name=".ui.DemoDialogActivity">
 
         </activity>
+
+        <service android:name=".service.MusicOnlineService"/>
     </application>
 
 </manifest>
