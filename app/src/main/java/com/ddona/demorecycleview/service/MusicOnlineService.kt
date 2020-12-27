@@ -48,7 +48,6 @@ class MusicOnlineService : Service() {
             override fun onPostExecute(result: MutableList<MusicOnline>) {
                 musicOnlines.clear()
                 musicOnlines.addAll(result)
-
             }
         }
         asyn.execute()
@@ -89,6 +88,7 @@ class MusicOnlineService : Service() {
     }
 
     fun searchMusicAsyn(name: String) {
+        (applicationContext as MyApp).songModelOnline.isSearchingData.set(true)
         val asyn = object : AsyncTask<Void, Void, MutableList<MusicOnline>>() {
             override fun doInBackground(vararg params: Void?): MutableList<MusicOnline> {
                 val listMusic = mutableListOf<MusicOnline>()
@@ -105,6 +105,7 @@ class MusicOnlineService : Service() {
 
                 (applicationContext as MyApp)
                     .songModelOnline.musicOnlines.value = result
+                (applicationContext as MyApp).songModelOnline.isSearchingData.set(false)
 
             }
         }

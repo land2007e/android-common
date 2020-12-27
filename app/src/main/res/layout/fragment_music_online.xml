@@ -1,32 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <data>
+    <variable
+        name="data"
+        type="com.ddona.demorecycleview.ui.model.SongModelOnline" />
+        <import type="android.view.View"/>
+    </data>
+
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="match_parent">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:orientation="horizontal"
-            android:layoutDirection="rtl"
-            android:layout_height="wrap_content">
-            <Button
-                android:layout_width="wrap_content"
-                android:text="Search"
-                android:textAllCaps="false"
-                android:background="?selectableItemBackground"
-                android:layout_height="wrap_content"
-                android:id="@+id/btn_search"/>
-            <EditText
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:hint="Song name"
-                android:singleLine="true"
-                android:id="@+id/edt_song_name"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:layoutDirection="rtl"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_search"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="?selectableItemBackground"
+                    android:text="Search"
+                    android:textAllCaps="false" />
+
+                <EditText
+                    android:id="@+id/edt_song_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Song name"
+                    android:singleLine="true" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rc"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </LinearLayout>
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:id="@+id/rc"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+
+        <ProgressBar
+            android:visibility="@{data.isSearchingData() ? View.VISIBLE : View.GONE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 </layout>

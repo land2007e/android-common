@@ -41,6 +41,9 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
         )
         binding.rc.layoutManager = GridLayoutManager(context, 2)
         binding.rc.adapter = MusicOnlineAdapter(this)
+
+        binding.data = (context!!.applicationContext as MyApp).songModelOnline
+
         createConnectService()
 
         binding.btnSearch.setOnClickListener(this)
@@ -68,7 +71,7 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
                 val myBinder = binder as MusicOnlineService.MyBinder
                 service = myBinder.service
                 if ( service!!.getMusicOnlines().size == 0){
-                    service?.initThreadMusicOnline()
+                    service?.searchMusicAsyn("")
                 }else {
                     binding.rc.adapter!!.notifyDataSetChanged()
                 }
