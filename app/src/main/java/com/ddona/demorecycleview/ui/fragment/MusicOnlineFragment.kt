@@ -4,7 +4,6 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.IBinder
 import android.view.LayoutInflater
@@ -16,13 +15,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.ddona.demorecycleview.MyApp
 import com.ddona.demorecycleview.R
 import com.ddona.demorecycleview.databinding.FragmentMusicOnlineBinding
-import com.ddona.demorecycleview.model.MediaManagerOnline
 import com.ddona.demorecycleview.model.MusicOnline
 import com.ddona.demorecycleview.service.MusicOnlineService
 import com.ddona.demorecycleview.ui.adapter.MusicOnlineAdapter
-import kotlinx.android.synthetic.main.fragment_music_online.view.*
-import org.jsoup.Jsoup
-import java.lang.Exception
 
 class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.OnClickListener {
     private lateinit var binding: FragmentMusicOnlineBinding
@@ -44,7 +39,10 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
 
         binding.data = (context!!.applicationContext as MyApp).songModelOnline
 
+        openServiceUnBound()
+
         createConnectService()
+
 
         binding.btnSearch.setOnClickListener(this)
         register()
@@ -83,6 +81,14 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
         intent.setClass(context!!, MusicOnlineService::class.java)
         //gui yeu cau
         context!!.bindService(intent, conn!!, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun openServiceUnBound(){
+        val intent = Intent()
+        intent.setClass(context!!, MusicOnlineService::class.java)
+        //bat service unbound
+        //moi lan goi startService thi chac chan vao onStartCommand
+        context!!.startService(intent)
     }
 
     override fun onDestroyView() {

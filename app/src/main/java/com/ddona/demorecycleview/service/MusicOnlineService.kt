@@ -1,20 +1,34 @@
 package com.ddona.demorecycleview.service
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.app.Service
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Drawable
 import android.os.AsyncTask
 import android.os.Binder
+import android.os.Build
 import android.os.IBinder
+import android.widget.RemoteViews
+import androidx.core.app.NotificationCompat
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.ddona.demorecycleview.MyApp
+import com.ddona.demorecycleview.R
 import com.ddona.demorecycleview.model.MediaManagerOnline
 import com.ddona.demorecycleview.model.MusicOnline
 import org.jsoup.Jsoup
-import java.lang.Exception
 import java.util.concurrent.Executors
+
 
 class MusicOnlineService : Service() {
     private val musicOnlines = mutableListOf<MusicOnline>()
     private val media = MediaManagerOnline()
+    private var currentPosition = -1
 
     fun getMusicOnlines() = musicOnlines
 
@@ -24,6 +38,46 @@ class MusicOnlineService : Service() {
 
     override fun onBind(intent: Intent): IBinder {
         return MyBinder(this)
+    }
+
+    //unbound
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        //force thi service chet
+        if (intent != null) {
+            action(intent)
+        }
+        return START_NOT_STICKY
+        //chet di song lai
+//        return START_STICKY
+        //chet di song lai 1 lan
+//        return START_REDELIVER_INTENT
+//        return START_NOT_STICKY
+    }
+
+    private fun action(intent: Intent) {
+        if (intent.action == null) {
+            return
+        }
+        when (intent.action) {
+            "PREVIOUS" -> {
+                if (currentPosition == 0) {
+                    return
+                }
+                play(currentPosition - 1)
+            }
+            "PLAY" -> {
+                pause(currentPosition)
+            }
+            "PAUSE" -> {
+                play(currentPosition)
+            }
+            "NEXT" -> {
+                if (currentPosition == musicOnlines.size - 1) {
+                    return
+                }
+                play(currentPosition + 1)
+            }
+        }
     }
 
     class MyBinder : Binder {
@@ -67,7 +121,10 @@ class MusicOnlineService : Service() {
         val doc = Jsoup.connect(link).get()
         for (element in doc.selectFirst("div.tab-content").select("li.media")) {
             try {
-                val linkHtml = element.selectFirst("div.media-left").selectFirst("a").attr("href")
+                var linkHtml = element.selectFirst("div.media-left").selectFirst("a").attr("href")
+                if (!linkHtml.startsWith("http")) {
+                    linkHtml = "https://vi.chiasenhac.vn" + linkHtml
+                }
                 val title = element.selectFirst("div.media-left").selectFirst("a").attr("title")
                 val linkImage =
                     element.selectFirst("div.media-left").selectFirst("a").selectFirst("img")
@@ -177,10 +234,124 @@ class MusicOnlineService : Service() {
     }
 
     fun play(position: Int) {
+        currentPosition = position
+        createNotification(position)
         if (musicOnlines[position].linkMusic == null) {
             getLinkMusicAsyn(musicOnlines[position].linkHtml, position)
         } else {
             media.setPath(musicOnlines[position].linkMusic!!)
+        }
+    }
+
+    fun pause(position: Int) {
+        currentPosition = position
+        media.pause()
+        createNotification(position, isPlaying = true)
+    }
+
+    private fun createNotification(
+        position: Int, isPlaying: Boolean = false
+    ) {
+        createChannel()
+//        val no = NotificationCompat.Builder(this,"NO")
+//            .setContentTitle("Music")
+//            .setContentText(musicOnlines[position].name + "\n"+musicOnlines[position].artist)
+//            .setSmallIcon(R.drawable.baseline_home_purple_500_48dp)
+//            .setLargeIcon(BitmapFactory.decodeResource(
+//                resources, R.drawable.aodai2
+//            ))
+//            .build()
+//        startForeground(1, no)
+        val remoteView = RemoteViews(packageName, R.layout.layout_notification_music)
+        remoteView.setTextViewText(R.id.tv_name, musicOnlines[position].name)
+        remoteView.setTextViewText(R.id.tv_artist, musicOnlines[position].artist)
+        remoteView.setImageViewBitmap(
+            R.id.btn_play,
+            BitmapFactory.decodeResource(
+                resources,
+                if (isPlaying) R.drawable.baseline_pause_purple_500_48dp else
+                    R.drawable.baseline_play_arrow_purple_500_48dp
+            )
+        )
+        createPendingIntentMusic(remoteView, isPlaying)
+        val no = NotificationCompat.Builder(this, "NO")
+            .setSmallIcon(R.drawable.baseline_music_note_black_24dp)
+            .setContent(remoteView)
+            .setCustomBigContentView(remoteView)
+            .build()
+
+        if (musicOnlines[position].linkImage != null) {
+            Glide.with(this).asBitmap().load(
+                musicOnlines[position].linkImage
+            ).into(
+                object : CustomTarget<Bitmap>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap>?
+                    ) {
+                        remoteView.setImageViewBitmap(R.id.iv_img, resource)
+                        startForeground(1, no)
+                    }
+
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+                }
+            )
+
+        }
+
+        startForeground(1, no)
+
+    }
+
+    private fun createPendingIntentMusic(remoteViews: RemoteViews, isPlaying: Boolean) {
+        val intentPrevious = Intent()
+        intentPrevious.setClass(this, MusicOnlineService::class.java)
+        intentPrevious.setAction("PREVIOUS")
+        val pendingIntentPrevious = PendingIntent.getService(
+            this, 1,
+            intentPrevious, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        remoteViews.setOnClickPendingIntent(R.id.btn_previous, pendingIntentPrevious)
+
+        val intentPlay = Intent()
+        intentPlay.setClass(this, MusicOnlineService::class.java)
+        if (isPlaying) {
+            intentPlay.setAction("PAUSE")
+        } else {
+            intentPlay.setAction("PLAY")
+        }
+        val pendingIntentPlay = PendingIntent.getService(
+            this, 2,
+            intentPlay, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        remoteViews.setOnClickPendingIntent(R.id.btn_play, pendingIntentPlay)
+
+
+        val intentNext = Intent()
+        intentNext.setClass(this, MusicOnlineService::class.java)
+        intentNext.setAction("NEXT")
+        val pendingIntentNext = PendingIntent.getService(
+            this, 3,
+            intentNext, PendingIntent.FLAG_UPDATE_CURRENT
+        )
+        remoteViews.setOnClickPendingIntent(R.id.btn_next, pendingIntentNext)
+
+
+    }
+
+    private fun createChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("NO", "NO", importance)
+            channel.description = "NO"
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            val notificationManager = getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(channel)
         }
     }
 }
