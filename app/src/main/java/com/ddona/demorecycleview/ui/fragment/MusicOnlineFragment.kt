@@ -69,7 +69,9 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
                 val myBinder = binder as MusicOnlineService.MyBinder
                 service = myBinder.service
                 if ( service!!.getMusicOnlines().size == 0){
-                    service?.searchMusicAsyn("")
+//                    service?.searchMusicAsyn("")
+                    (context!!.applicationContext as MyApp)
+                        .songModelOnline.searchSong(null)
                 }else {
                     binding.rc.adapter!!.notifyDataSetChanged()
                 }
@@ -115,7 +117,11 @@ class MusicOnlineFragment : Fragment(), MusicOnlineAdapter.IMusicOnline, View.On
     override fun onClick(v: View) {
         when(v.id){
             R.id.btn_search->{
-                service?.searchMusicAsyn(binding.edtSongName.text.toString())
+//                service?.searchMusicAsyn(binding.edtSongName.text.toString())
+                (context!!.applicationContext as MyApp)
+                .songModelOnline.searchSong(
+                        binding.edtSongName.text.toString()
+                    )
             }
         }
     }

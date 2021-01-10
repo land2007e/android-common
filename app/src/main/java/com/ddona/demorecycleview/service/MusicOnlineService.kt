@@ -3,7 +3,7 @@ package com.ddona.demorecycleview.service
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
-import android.app.Service
+import androidx.lifecycle.LifecycleService
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -14,6 +14,10 @@ import android.os.Build
 import android.os.IBinder
 import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LifecycleRegistry
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
@@ -25,7 +29,7 @@ import org.jsoup.Jsoup
 import java.util.concurrent.Executors
 
 
-class MusicOnlineService : Service() {
+class MusicOnlineService :LifecycleService()  {
     private val musicOnlines = mutableListOf<MusicOnline>()
     private val media = MediaManagerOnline()
     private var currentPosition = -1
@@ -34,14 +38,23 @@ class MusicOnlineService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        (applicationContext as MyApp).songModelOnline
+            .musicOnlines.observe(this, Observer{
+                musicOnlines.clear()
+                musicOnlines.addAll(it)
+            })
     }
 
+
+
     override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
         return MyBinder(this)
     }
 
     //unbound
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        super.onStartCommand(intent, flags, startId)
         //force thi service chet
         if (intent != null) {
             action(intent)

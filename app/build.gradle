@@ -13,12 +13,18 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         dataBinding{
             enabled=true
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildTypes {
@@ -51,6 +57,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:+'
     implementation "io.reactivex.rxjava2:rxkotlin:2.+"
+    implementation "io.reactivex.rxjava2:rxandroid:+"
+    implementation "androidx.lifecycle:lifecycle-service:2.2.0"
 
     def room_version = "2.2.6"
     implementation "androidx.room:room-runtime:$room_version"
@@ -59,4 +67,10 @@ dependencies {
     implementation('com.github.ihsanbal:LoggingInterceptor:3.1.0') {
         exclude group: 'org.json', module: 'json'
     }
+
+    implementation "android.arch.lifecycle:extensions:1.1.1"
+//    kapt "android.arch.lifecycle:compiler:1.1.1"
+
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
 }
