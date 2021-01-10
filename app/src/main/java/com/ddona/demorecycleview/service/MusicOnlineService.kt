@@ -218,7 +218,13 @@ class MusicOnlineService :LifecycleService()  {
     private fun getLinkMusicAsyn(linkHtml: String, position: Int) {
         val asyn = object : AsyncTask<Void, Void, String?>() {
             override fun doInBackground(vararg params: Void?): String? {
-                return getLinkMusic(linkHtml = linkHtml)
+                val link = getLinkMusic(linkHtml = linkHtml)
+                musicOnlines[position].linkMusic = link
+                (applicationContext as MyApp)
+                    .songModelOnline.saveInToDatabase(
+                        musicOnlines[position], context = applicationContext
+                    )
+                return link
             }
 
             override fun onPostExecute(result: String?) {
@@ -246,6 +252,8 @@ class MusicOnlineService :LifecycleService()  {
 
         return null
     }
+
+
 
     fun play(position: Int) {
         currentPosition = position

@@ -23,8 +23,9 @@ class MyApp : Application() {
 
         db = Room.databaseBuilder(
             applicationContext,
-            AppDatabase::class.java, "database-name"
-        ).build()
+            AppDatabase::class.java, "database-name.sqlite"
+        ).allowMainThreadQueries()
+            .build()
     }
 
 

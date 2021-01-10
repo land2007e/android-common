@@ -11,5 +11,6 @@ data class MusicOnline(
     var linkImage:String?=null,
     var linkMusic:String?=null,
     @PrimaryKey
-    val id:String=""
+    val id:String="",
+    var keySearch:String = ""
 )
