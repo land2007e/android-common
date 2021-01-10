@@ -32,7 +32,7 @@
                 android:layout_marginLeft="16dp"
                 android:layout_marginRight="16dp"
                 android:layout_marginTop="4dp"
-                app:setText="@{data.name}"
+                app:setText="@{data.songName}"
                 android:layout_height="wrap_content"/>
             <TextView
                 android:layout_width="wrap_content"
@@ -40,7 +40,7 @@
                 android:textSize="18sp"
                 android:layout_marginLeft="16dp"
                 android:layout_marginTop="4dp"
-                app:setText="@{data.artist}"
+                app:setText="@{data.artistName}"
                 android:layout_marginBottom="8dp"
                 android:layout_height="wrap_content"/>
         </LinearLayout>

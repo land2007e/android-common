@@ -86,6 +86,7 @@ class MusicOnlineService : Service() {
         constructor(service: MusicOnlineService) {
             this.service = service
         }
+
     }
 
 
@@ -237,7 +238,7 @@ class MusicOnlineService : Service() {
         currentPosition = position
         createNotification(position)
         if (musicOnlines[position].linkMusic == null) {
-            getLinkMusicAsyn(musicOnlines[position].linkHtml, position)
+            getLinkMusicAsyn(musicOnlines[position].linkSong, position)
         } else {
             media.setPath(musicOnlines[position].linkMusic!!)
         }
@@ -263,8 +264,8 @@ class MusicOnlineService : Service() {
 //            .build()
 //        startForeground(1, no)
         val remoteView = RemoteViews(packageName, R.layout.layout_notification_music)
-        remoteView.setTextViewText(R.id.tv_name, musicOnlines[position].name)
-        remoteView.setTextViewText(R.id.tv_artist, musicOnlines[position].artist)
+        remoteView.setTextViewText(R.id.tv_name, musicOnlines[position].songName)
+        remoteView.setTextViewText(R.id.tv_artist, musicOnlines[position].artistName)
         remoteView.setImageViewBitmap(
             R.id.btn_play,
             BitmapFactory.decodeResource(
