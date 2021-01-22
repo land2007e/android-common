@@ -120,14 +120,15 @@ class MusicOnlineService :LifecycleService()  {
         }
         asyn.execute()
     }
-
-    fun searchMusic(songName: String, page: Int = 1): MutableList<MusicOnline> {
+//    https://chiasenhac.vn/mp3/vietnam.html?tab=bai-hat-moi&page=2
+//    https://chiasenhac.vn/tim-kiem?q={0}&page_music={1}&filter=
+    fun searchMusic(songName: String, page: Int = 1, linkOrigin:String="https://chiasenhac.vn/tim-kiem?q={0}&page_music={1}&filter="): MutableList<MusicOnline> {
         var newName = songName
         while (newName.contains("  ")) {
             newName = newName.replace("  ", " ")
         }
         newName = newName.trim()
-        val link = "https://chiasenhac.vn/tim-kiem?q={0}&page_music={1}&filter="
+        val link = linkOrigin
             .replace("{0}", newName)
             .replace("{1}", page.toString())
             .replace(" ", "%20")

@@ -9,7 +9,8 @@ class FragmentActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
-        addMusicOnlineFragment()
+//        addMusicOnlineFragment()
+        addLoginFragment()
     }
 
     private fun addMusicOnlineFragment() {
@@ -19,6 +20,21 @@ class FragmentActivity : AppCompatActivity() {
         tran.add(R.id.content, fr)
 
         tran.commit()
+    }
+
+    fun addMusicOnlineFragmentSecond() {
+        val manager = supportFragmentManager
+        val tran = manager.beginTransaction()
+        val fr = MusicOnlineFragment()
+        tran
+            .setCustomAnimations(
+                R.anim.open_open,
+                R.anim.open_close,
+                R.anim.close_open,
+                R.anim.close_close
+            )
+            .replace(R.id.content, fr)
+            .commit()
     }
     private fun addMusicOfflineFragment() {
         val manager = supportFragmentManager
