@@ -10,7 +10,8 @@ class FragmentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
 //        addMusicOnlineFragment()
-        addLoginFragment()
+//        addLoginFragment()
+        addLoginToChatFragment()
     }
 
     private fun addMusicOnlineFragment() {
@@ -20,6 +21,29 @@ class FragmentActivity : AppCompatActivity() {
         tran.add(R.id.content, fr)
 
         tran.commit()
+    }
+    private fun addLoginToChatFragment() {
+        val manager = supportFragmentManager
+        val tran = manager.beginTransaction()
+        val fr = LoginToChatFragment()
+        tran.add(R.id.content, fr)
+
+        tran.commit()
+    }
+
+    fun addChatFragment(senderId:Int, receiverId:Int) {
+        val manager = supportFragmentManager
+        val tran = manager.beginTransaction()
+        val fr = ChatFragment(senderId, receiverId)
+        tran
+            .setCustomAnimations(
+                R.anim.open_open,
+                R.anim.open_close,
+                R.anim.close_open,
+                R.anim.close_close
+            )
+            .replace(R.id.content, fr)
+            .commit()
     }
 
     fun addMusicOnlineFragmentSecond() {

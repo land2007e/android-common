@@ -263,6 +263,7 @@ class MusicOnlineService :LifecycleService()  {
             getLinkMusicAsyn(musicOnlines[position].linkSong, position)
         } else {
             media.setPath(musicOnlines[position].linkMusic!!)
+
         }
     }
 
