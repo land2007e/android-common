@@ -10,8 +10,8 @@ class FragmentActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_fragment)
 //        addMusicOnlineFragment()
-//        addLoginFragment()
-        addLoginToChatFragment()
+        addLoginFragment()
+//        addLoginToChatFragment()
     }
 
     private fun addMusicOnlineFragment() {

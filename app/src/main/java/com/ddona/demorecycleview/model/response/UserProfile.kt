@@ -7,6 +7,7 @@ open class UserProfile{
     var password=""
     var firstName=""
     var lastName=""
+    var token=""
     var avatar:String?=null
     var sex = "FEMALE"
 

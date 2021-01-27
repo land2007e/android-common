@@ -13,13 +13,13 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 open interface SongAPI{
-    @GET("/api/searchSong")
+    @GET("/song/searchSong")
     fun songSearch(
         @Query("songName") songName:String?,
         @Query("currentPage") currentPage:Int=1
     ):Observable<MutableList<MusicOnline>>
 
-    @POST("/api/login")
+    @POST("/auth/login")
     fun login(
         @Body request:RequestLogin
     ):Observable<CommonResponse<UserProfile>>
