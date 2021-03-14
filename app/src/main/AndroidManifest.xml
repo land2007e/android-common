@@ -14,6 +14,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDAKQPUGwE9yQLsr3CrTSdS2NxoE1p9nOs" />
+
         <activity android:name=".MainActivity">
 
         </activity>
@@ -26,17 +31,20 @@
 
         </activity>
         <activity android:name=".ui.FragmentActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".ui.DemoDialogActivity">
 
         </activity>
 
         <service android:name=".service.MusicOnlineService"/>
+        <activity android:name=".ui.map.DirectionActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>

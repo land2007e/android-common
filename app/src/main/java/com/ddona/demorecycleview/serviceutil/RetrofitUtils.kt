@@ -34,4 +34,28 @@ object RetrofitUtils{
             .build()
             .create(SongAPI::class.java)
     }
+
+    @JvmStatic
+    fun createRetrofitMap() : MapApi{
+        val http = OkHttpClient.Builder()
+            .callTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .writeTimeout(1, TimeUnit.MINUTES)
+            .addInterceptor(
+                LoggingInterceptor.Builder()
+                    .setLevel(Level.BASIC)
+                    .log(Log.VERBOSE)
+                    .addHeader("cityCode","53")
+                    .addQueryParam("moonStatus", "crescent")
+                    .build()
+            )
+            .build()
+        return Retrofit.Builder()
+            .baseUrl("https://maps.googleapis.com")
+            .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+            .client(http)
+            .build()
+            .create(MapApi::class.java)
+    }
 }
